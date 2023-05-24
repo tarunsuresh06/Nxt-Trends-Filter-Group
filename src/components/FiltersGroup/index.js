@@ -29,6 +29,7 @@ const FiltersGroup = props => {
     return (
       <div className="search-input-container">
         <input
+          type="search"
           placeholder="Search"
           className="filter-search-input"
           onChange={onChangeFilterSearch}
@@ -80,7 +81,7 @@ const FiltersGroup = props => {
             <img
               className="rating-img"
               src={eachRating.imageUrl}
-              alt="rating"
+              alt={`rating ${eachRating.ratingId}`}
             />
             <p className="rating-text"> & up</p>
           </li>
