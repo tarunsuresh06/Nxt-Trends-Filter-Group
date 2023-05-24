@@ -169,6 +169,17 @@ class AllProductsSection extends Component {
     this.getProducts()
   }
 
+  handleClearFilters = () => {
+    this.setState(
+      {
+        activeCategoryId: '',
+        activeRatingId: '',
+        filterSearchInputValue: '',
+      },
+      this.getProducts,
+    )
+  }
+
   render() {
     const {isLoading, activeCategoryId, filterSearchInputValue} = this.state
 
@@ -184,6 +195,7 @@ class AllProductsSection extends Component {
           handleFilterSearch={this.handleFilterSearch}
           filterSearchInputValue={filterSearchInputValue}
           enterSearchInput={this.enterSearchInput}
+          handleClearFilters={this.handleClearFilters}
         />
 
         {isLoading ? this.renderLoader() : this.renderProductsList()}

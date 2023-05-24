@@ -12,6 +12,7 @@ const FiltersGroup = props => {
     handleFilterSearch,
     filterSearchInputValue,
     enterSearchInput,
+    handleClearFilters,
   } = props
 
   const renderSearchInput = () => {
@@ -28,7 +29,7 @@ const FiltersGroup = props => {
     return (
       <div className="search-input-container">
         <input
-          placeholder="search"
+          placeholder="Search"
           className="filter-search-input"
           onChange={onChangeFilterSearch}
           onKeyDown={onEnterSearchInput}
@@ -88,6 +89,10 @@ const FiltersGroup = props => {
     </ul>
   )
 
+  const onClickClearFilters = () => {
+    handleClearFilters()
+  }
+
   return (
     <div className="filters-group-container">
       {renderSearchInput()}
@@ -95,6 +100,13 @@ const FiltersGroup = props => {
       {renderCategoryListSection()}
       <h1 className="filter-title">Rating</h1>
       {renderRatingSection()}
+      <button
+        className="clear-filters-btn"
+        type="button"
+        onClick={onClickClearFilters}
+      >
+        Clear Filters
+      </button>
     </div>
   )
 }
