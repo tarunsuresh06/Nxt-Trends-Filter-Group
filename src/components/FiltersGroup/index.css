@@ -11,4 +11,25 @@
   }
 }
 
-/* Write your CSS here */
+.category-title {
+  font-size: 20px;
+  color: #12022f;
+}
+
+.category-list {
+  padding: 0;
+}
+
+.category-item {
+  list-style-type: none;
+  color: #475569;
+  cursor: pointer;
+}
+
+.category-text {
+  font-size: 16px;
+}
+
+.active-category {
+  color: #0967d2;
+}

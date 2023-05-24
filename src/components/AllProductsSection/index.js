@@ -70,6 +70,7 @@ class AllProductsSection extends Component {
     productsList: [],
     isLoading: false,
     activeOptionId: sortbyOptions[0].optionId,
+    activeCategoryId: '',
   }
 
   componentDidMount() {
@@ -77,6 +78,8 @@ class AllProductsSection extends Component {
   }
 
   getProducts = async () => {
+    const {activeCategoryId} = this.state
+
     this.setState({
       isLoading: true,
     })
@@ -85,7 +88,8 @@ class AllProductsSection extends Component {
     // TODO: Update the code to get products with filters applied
 
     const {activeOptionId} = this.state
-    const apiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}`
+    const apiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}&category=${activeCategoryId}`
+
     const options = {
       headers: {
         Authorization: `Bearer ${jwtToken}`,
@@ -93,6 +97,7 @@ class AllProductsSection extends Component {
       method: 'GET',
     }
     const response = await fetch(apiUrl, options)
+
     if (response.ok) {
       const fetchedData = await response.json()
       const updatedData = fetchedData.products.map(product => ({
@@ -142,13 +147,21 @@ class AllProductsSection extends Component {
 
   // TODO: Add failure view
 
+  handleCategory = id => {
+    this.setState({activeCategoryId: id}, this.getProducts)
+  }
+
   render() {
-    const {isLoading} = this.state
+    const {isLoading, activeCategoryId} = this.state
 
     return (
       <div className="all-products-section">
         {/* TODO: Update the below element */}
-        <FiltersGroup />
+        <FiltersGroup
+          categoryOptions={categoryOptions}
+          handleCategory={this.handleCategory}
+          activeCategoryId={activeCategoryId}
+        />
 
         {isLoading ? this.renderLoader() : this.renderProductsList()}
       </div>
