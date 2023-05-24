@@ -71,6 +71,7 @@ class AllProductsSection extends Component {
     isLoading: false,
     activeOptionId: sortbyOptions[0].optionId,
     activeCategoryId: '',
+    activeRatingId: '',
   }
 
   componentDidMount() {
@@ -78,7 +79,7 @@ class AllProductsSection extends Component {
   }
 
   getProducts = async () => {
-    const {activeCategoryId} = this.state
+    const {activeCategoryId, activeRatingId} = this.state
 
     this.setState({
       isLoading: true,
@@ -88,7 +89,7 @@ class AllProductsSection extends Component {
     // TODO: Update the code to get products with filters applied
 
     const {activeOptionId} = this.state
-    const apiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}&category=${activeCategoryId}`
+    const apiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}&category=${activeCategoryId}&rating=${activeRatingId}`
 
     const options = {
       headers: {
@@ -151,6 +152,10 @@ class AllProductsSection extends Component {
     this.setState({activeCategoryId: id}, this.getProducts)
   }
 
+  handleRating = id => {
+    this.setState({activeRatingId: id}, this.getProducts)
+  }
+
   render() {
     const {isLoading, activeCategoryId} = this.state
 
@@ -161,6 +166,8 @@ class AllProductsSection extends Component {
           categoryOptions={categoryOptions}
           handleCategory={this.handleCategory}
           activeCategoryId={activeCategoryId}
+          ratingsList={ratingsList}
+          handleRating={this.handleRating}
         />
 
         {isLoading ? this.renderLoader() : this.renderProductsList()}
