@@ -72,6 +72,7 @@ class AllProductsSection extends Component {
     activeOptionId: sortbyOptions[0].optionId,
     activeCategoryId: '',
     activeRatingId: '',
+    filterSearchInputValue: '',
   }
 
   componentDidMount() {
@@ -79,7 +80,11 @@ class AllProductsSection extends Component {
   }
 
   getProducts = async () => {
-    const {activeCategoryId, activeRatingId} = this.state
+    const {
+      activeCategoryId,
+      activeRatingId,
+      filterSearchInputValue,
+    } = this.state
 
     this.setState({
       isLoading: true,
@@ -89,7 +94,7 @@ class AllProductsSection extends Component {
     // TODO: Update the code to get products with filters applied
 
     const {activeOptionId} = this.state
-    const apiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}&category=${activeCategoryId}&rating=${activeRatingId}`
+    const apiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}&category=${activeCategoryId}&rating=${activeRatingId}&title_search=${filterSearchInputValue}`
 
     const options = {
       headers: {
@@ -156,8 +161,16 @@ class AllProductsSection extends Component {
     this.setState({activeRatingId: id}, this.getProducts)
   }
 
+  handleFilterSearch = value => {
+    this.setState({filterSearchInputValue: value})
+  }
+
+  enterSearchInput = () => {
+    this.getProducts()
+  }
+
   render() {
-    const {isLoading, activeCategoryId} = this.state
+    const {isLoading, activeCategoryId, filterSearchInputValue} = this.state
 
     return (
       <div className="all-products-section">
@@ -168,6 +181,9 @@ class AllProductsSection extends Component {
           activeCategoryId={activeCategoryId}
           ratingsList={ratingsList}
           handleRating={this.handleRating}
+          handleFilterSearch={this.handleFilterSearch}
+          filterSearchInputValue={filterSearchInputValue}
+          enterSearchInput={this.enterSearchInput}
         />
 
         {isLoading ? this.renderLoader() : this.renderProductsList()}
