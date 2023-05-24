@@ -65,10 +65,17 @@ const ratingsList = [
   },
 ]
 
+const apiStatusConstants = {
+  initial: 'INITIAL',
+  success: 'SUCCESS',
+  failure: 'FAILURE',
+  inProgress: 'IN_PROGRESS',
+}
+
 class AllProductsSection extends Component {
   state = {
     productsList: [],
-    isLoading: false,
+    apiStatus: apiStatusConstants.initial,
     activeOptionId: sortbyOptions[0].optionId,
     activeCategoryId: '',
     activeRatingId: '',
@@ -87,11 +94,9 @@ class AllProductsSection extends Component {
     } = this.state
 
     this.setState({
-      isLoading: true,
+      apiStatus: apiStatusConstants.inProgress,
     })
     const jwtToken = Cookies.get('jwt_token')
-
-    // TODO: Update the code to get products with filters applied
 
     const {activeOptionId} = this.state
     const apiUrl = `https://apis.ccbp.in/products?sort_by=${activeOptionId}&category=${activeCategoryId}&rating=${activeRatingId}&title_search=${filterSearchInputValue}`
@@ -116,8 +121,10 @@ class AllProductsSection extends Component {
       }))
       this.setState({
         productsList: updatedData,
-        isLoading: false,
+        apiStatus: apiStatusConstants.success,
       })
+    } else {
+      this.setState({apiStatus: apiStatusConstants.failure})
     }
   }
 
@@ -128,8 +135,9 @@ class AllProductsSection extends Component {
   renderProductsList = () => {
     const {productsList, activeOptionId} = this.state
 
-    // TODO: Add No Products View
-    return (
+    const showProducts = productsList.length > 0
+
+    return showProducts ? (
       <div className="all-products-container">
         <ProductsHeader
           activeOptionId={activeOptionId}
@@ -142,7 +150,34 @@ class AllProductsSection extends Component {
           ))}
         </ul>
       </div>
+    ) : (
+      <div className="no-products-view">
+        <img
+          src="https://assets.ccbp.in/frontend/react-js/nxt-trendz/nxt-trendz-no-products-view.png"
+          className="no-products-img"
+          alt="no products"
+        />
+        <h1 className="no-products-heading">No Products Found</h1>
+        <p className="no-products-description">
+          We could not find any products. Try other filters.
+        </p>
+      </div>
     )
+  }
+
+  renderAllProducts = () => {
+    const {apiStatus} = this.state
+
+    switch (apiStatus) {
+      case apiStatusConstants.success:
+        return this.renderProductsList()
+      case apiStatusConstants.failure:
+        return this.renderFailureView()
+      case apiStatusConstants.inProgress:
+        return this.renderLoader()
+      default:
+        return null
+    }
   }
 
   renderLoader = () => (
@@ -151,7 +186,21 @@ class AllProductsSection extends Component {
     </div>
   )
 
-  // TODO: Add failure view
+  renderFailureView = () => (
+    <div className="products-error-view-container">
+      <img
+        src="https://assets.ccbp.in/frontend/react-js/nxt-trendz/nxt-trendz-products-error-view.png"
+        alt="products failure"
+        className="products-failure-img"
+      />
+      <h1 className="product-failure-heading-text">
+        Oops! Something Went Wrong
+      </h1>
+      <p className="products-failure-description">
+        We are having some trouble processing your request. Please try again.
+      </p>
+    </div>
+  )
 
   handleCategory = id => {
     this.setState({activeCategoryId: id}, this.getProducts)
@@ -181,11 +230,10 @@ class AllProductsSection extends Component {
   }
 
   render() {
-    const {isLoading, activeCategoryId, filterSearchInputValue} = this.state
+    const {activeCategoryId, filterSearchInputValue} = this.state
 
     return (
       <div className="all-products-section">
-        {/* TODO: Update the below element */}
         <FiltersGroup
           categoryOptions={categoryOptions}
           handleCategory={this.handleCategory}
@@ -198,7 +246,7 @@ class AllProductsSection extends Component {
           handleClearFilters={this.handleClearFilters}
         />
 
-        {isLoading ? this.renderLoader() : this.renderProductsList()}
+        {this.renderAllProducts()}
       </div>
     )
   }
